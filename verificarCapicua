@@ -1,0 +1,43 @@
+// Capicua.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "conio.h"
+#include <iostream>
+
+using namespace std;
+
+int invertir(int a);
+bool verifCapicua(int a);
+
+void main(){
+	int nro, r;
+	cout<<"Ingrese el numero a verificar:";
+	cin>>nro;
+	r =verifCapicua(nro);
+	if( r == true)
+		cout<<"El  numero"<<nro<<"es capicua";
+	else 
+		cout<<"EL numero"<<nro<<"no es capicua";
+	getch();
+}
+
+int invertir(int a){
+	int b = 0,c=0;
+	while (a > 0) {
+		b = a % 10;
+		c = (c * 10) + b;
+		a = a / 10;
+	}
+	return (c);
+}
+
+bool verifCapicua(int a){
+	int b;
+	bool k = false;
+	b = invertir(a);
+	if(a==b)
+		k = true;
+	return (k);
+}
+
