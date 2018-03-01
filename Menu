@@ -1,0 +1,77 @@
+// Menu.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "conio.h"
+#include <iostream>
+using namespace std;
+
+int sumarDigitos(int a);
+int invertir(int a);
+bool verifCapicua(int a);
+
+void main(){
+	int opc, a, b, c;
+	bool x;
+	do{
+		cout<<"Menu"<<endl;
+		cout<<"1 Sumatoria de digitos"<<endl;
+		cout<<"2 Capicua"<<endl;
+		cout<<"0 SALIR"<<endl;
+		cout<<"Ingrese una opcion"<<endl;
+		cin>>opc;
+		switch(opc){
+		case 1:{
+			cout<<"Ingrese el numero: ";
+			cin>>a;
+			b=sumarDigitos(a);
+			cout<<"La suma es: "<<b;
+			break;
+			   }
+		case 2:{
+			cout<<"Ingrese el numero a verificar: ";
+			cin>>a;
+			x=verifCapicua(a);
+			if(x == true)
+				cout<<"El numero"<<a<<"es capicua";
+			else
+				cout<<"El numero"<<a<<"no es capicua";
+			break;
+			   }
+		case 0: cout<<"GRACIAS"; break;
+		default: cout<<"Opcion incorreta";break;
+		}
+	}while(opc!=0);
+	getch();
+}
+
+int sumarDigitos(int a){
+	int b=0, c=0;
+	while(a>0){
+		b=a%10;
+		c=c+b;
+		a=a/10;
+	}
+	return(c);
+}
+
+int invertir(int a){
+	int b=0, c=0;
+	while(a>0){
+		b=a%10;
+		c=(c*10)+b;
+		a=a/10;
+	}
+	return(c);
+}
+bool verifCapicua(int a){
+	int b;
+	bool k=false;
+	b=invertir(a);
+	if(a == b)
+		k=true;
+	return(k);
+}
+
+
+
