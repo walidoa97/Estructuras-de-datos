@@ -1,0 +1,29 @@
+// invertirPares.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "conio.h" 
+#include <iostream>
+using namespace std;
+
+int contarDigitosPares(int a);
+
+void main(){
+  int nro, r;
+	cout<<"Introduce el numero original";
+	cin>>nro;
+	r=contarDigitosPares(nro);
+	cout<<"Los numeros pares son"<<r;
+	getch();
+}
+
+int contarDigitosPares(int a) {
+	int i = 0;
+	while (a > 0) {
+		a = a / 10;
+		if(a % 2==0){
+			i++;
+		}
+	}
+	return (i);
+}
