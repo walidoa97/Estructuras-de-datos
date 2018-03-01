@@ -1,0 +1,30 @@
+// Complemento.cpp : Defines the entry point for the console application.
+//
+
+
+#include "stdafx.h"
+#include "conio.h"
+#include <iostream>
+using namespace std;
+
+void main(){
+    int a,x,i=1,j=0;
+    cout<<"ingrese un numero para hallar el complemento : ";
+    cin>>x;
+    while(i<=x){
+		a=x%10;
+		a=9-a;
+		j=j*10+a;
+		x=x/10;
+	}
+	x=j;
+	i=1;
+	j=0;
+    while(i<=x){
+		a=x%10;
+		j=j*10+a;
+		x=x/10;
+	}
+    cout<<"El complemento a 9 del numero es: "<<j;
+    getch();
+}
