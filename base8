@@ -1,0 +1,19 @@
+
+#include "stdafx.h"
+#include "conio.h"
+#include <iostream>
+using namespace std;
+
+void main(){
+	int a, x, i=1, c=0;
+	cout<<"Ingrese un numero :";
+	cin>>x;
+	while(i<=x){
+		a=x%10;
+		if(a>7)
+			cout<<"El digito"<< a <<"no pertence a la base 8";
+		x=x/10;
+	}
+	getch();
+}
+
