@@ -1,0 +1,50 @@
+//archivo.h
+#pragma once
+class area
+{
+private:
+	float v;
+public:
+	area(void);
+	~area(void);
+	float calcular(float v);
+};
+
+//archivo.cpp de la clase
+#include "StdAfx.h"
+#include "area.h"
+
+area::area(void)
+{
+	v=5;
+}
+
+area::~area(void)
+{
+}
+
+float area::calcular(float v)
+{
+	float f;
+	f=v*v*v;
+	return(f);
+}
+
+// ejemplo 3.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include "area.h"
+
+using namespace std;
+
+void main(){
+	area area1;
+	int a;
+	cout<<"Ingrese el lado del cubo simetrico(mismo valor)";
+	cin>>a;
+	cout<<"El area del cubo es :"<<area1.calcular(a);
+	getch();
+}
