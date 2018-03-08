@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "conio.h"
 #include <iostream>
-#include "ciclofor.h"
+#include "notas.h"
 using namespace std;
 
 
 
 void main()
 { 
-	ciclofor ciclofor1, ciclofor2;
+	notas notas1, notas2;
 	float np,ef,p1,p2,p3;
 	float nf;
 	cout<< " Introduzca la nota practica: " ;
@@ -20,6 +20,6 @@ void main()
 	cout<< " Introduzca la nota del examen final: ";
 	cin>> ef;
 
-	cout<< " La nota final es: "<<ciclofor1.notas(np, p1, p2, p3, ef)<<endl;
+	cout<< " La nota final es: "<<notas1.notas(np, p1, p2, p3, ef)<<endl;
 	getch();
 }
