@@ -1,0 +1,68 @@
+#pragma once
+class fibo
+{
+private:
+	int n;
+
+public:
+	fibo(void);
+	~fibo(void);
+	void fibonacci(int n);
+};
+
+#include "StdAfx.h"
+#include <iostream>
+#include "fibo.h"
+using namespace std;
+
+
+fibo::fibo(void)
+{
+	n=0;
+}
+
+
+fibo::~fibo(void)
+{
+}
+
+void fibo::fibonacci(int n)
+{
+	int fib=1,anterior=1,sumar,actual;
+		if(n==1){
+			cout<<0<<" -- ";}
+		else{
+			if(n>=2){
+				cout<<0<<" -- ";
+				cout<<1<<" -- ";}
+		}
+		for(int i=3;i<=n;i++)
+		{	
+			cout<<fib<<" -- ";
+			actual=fib;
+			fib=fib+anterior;
+			anterior=actual;
+
+		}
+
+
+}
+
+
+
+#include "stdafx.h"
+#include "fibo.h"
+#include "conio.h"
+#include <iostream>
+using namespace std;
+
+
+
+void main(){
+	int a;
+	fibo fibo1;
+	cout<<"Escriba el numero de elementos de la secuencia: ";
+	cin>>a;
+	fibo1.fibonacci(a);
+	getch();
+}
