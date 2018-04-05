@@ -1,0 +1,77 @@
+#pragma once
+class circuloo
+{
+private:
+	float r;
+public:
+	circuloo(void);
+	~circuloo(void);
+
+
+float calcularperimetro(float r);
+float calculararea (float r);
+};
+
+#include "StdAfx.h"
+#include "circuloo.h"
+
+
+circuloo::circuloo(void)
+{
+}
+
+
+circuloo::~circuloo(void)
+{
+}
+float circuloo::calcularperimetro(float r)
+{
+	float pi=3.14,p;
+	      p=2*pi*r;
+		  return p;
+}
+float circuloo::calculararea(float r)
+{ float pi=3.14,a;
+        a=pi*r*r;
+		return a;
+
+}
+
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include "circuloo.h"
+
+using namespace std;
+
+void main()
+	{int opc,r;
+   circuloo circuloo1, circuloo2 ;
+   cout<<"ingrese el valor de r"<<endl;
+   cin>>r;
+  do
+  {
+	  cout<<"----menu----"<<endl;
+	  cout<<"1. calcular perimetro"<<endl;
+	  cout<<"2. calcular area"<<endl;
+	  cout<<"0. salir"<<endl;
+	  cin>>opc;
+	  switch(opc)
+	  {
+	  case 1:   
+			  cout<<"el perimetro del circulo es:"<<circuloo1.calcularperimetro(r);
+			     
+			  break;
+
+	  case 2: cout<<"el area del circulo es:"<<circuloo2.calculararea(r);
+
+			  break;
+
+	  case 0: 
+			   cout<<"salir"<<endl;
+			  break;
+	  }
+  } while(opc!=0);
+
+  getch();
+}
