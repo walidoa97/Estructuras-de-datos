@@ -1,0 +1,142 @@
+#pragma once
+class vector
+{
+private:
+		int v[20];
+		int dim ;
+	
+public:
+	vector(void);
+	~vector(void);
+
+	void cargarvector(int vec[20],int dim);
+	void mostrarvector(int vec[20],int dim);
+	void ordenarvector(int vec[20],int dim);
+	void maximovector(int vec[20],int dim);
+
+
+
+};
+
+#include "StdAfx.h"
+#include "vector.h"
+#include <iostream>
+#include "conio.h"
+
+using namespace std;
+
+vector::vector(void)
+{
+}
+
+
+vector::~vector(void)
+{
+}
+void vector::cargarvector(int v[],int dim)
+
+{
+	int i=0;
+		for(i=0;i<dim;i++)
+		{	
+			cin >>v[i];
+
+		}
+
+
+}
+void vector::mostrarvector(int v[],int dim)
+{
+	int i=0;
+	for(i=0;i<dim;i++)
+	{
+		cout<<v[i]<<endl;
+	}
+
+}
+void vector::maximovector(int v[],int dim)
+{
+	int i,max,p;
+	max=v[0];
+		for (i=0;i<dim;i++)
+		{
+			if(max<v[i])
+			{
+				max=v[i];
+				p=i;
+			}
+		}
+		cout<<"el minimo valor es: "<<max;
+		cout<<"se encuentra en la celda"<<p;
+}
+void vector::ordenarvector(int v[],int dim){
+	int i=0,j,aux;
+		for(i=0;i<(dim-1);i++)
+		{
+			for(j=i;j<dim;j++)
+			{
+				if(v[i] > v[j])
+				{
+					aux=v[i];
+					v[i]=v[j];
+					v[j]=aux;		
+				}		
+			}
+		}
+}
+
+#include "stdafx.h"
+#include "vector.h"
+#include <iostream>
+#include "conio.h"
+
+using namespace std;
+#define max 30
+
+void main()
+{
+
+	int op;
+	int vect[max];
+	int dim;
+	vector vector1;
+		do{
+				cout<<"ingrese dimension del vector: ";
+				cin>>dim;
+		}while ((dim>max) || (dim<=0));
+		do{
+			cout<<"-------MENU--------"<<endl;
+			cout<<"1.cargar vector"<<endl;
+			cout<<"2.mostrar vector"<<endl;
+			cout<<"3.ordenar vector"<<endl;
+			cout<<"4.maximo valor"<<endl;
+			cout<<"0.salir"<<endl;
+			cin>>op;
+			switch(op)
+				{
+					case 1:
+							vector1.cargarvector(vect,dim);
+							break;
+					case 2:
+							vector1.mostrarvector(vect,dim);
+							break;
+					case 3:
+							vector1.ordenarvector(vect,dim);
+							break;
+					case 4:
+							vector1.maximovector(vect,dim);
+							break;
+					case 0: 
+							cout<<"Salir"<<endl;
+							break;
+					default:
+							cout<<"Error: Opcion no valida..."<<endl;
+							break;
+				}
+			}while(op!=0);
+
+	getch();
+}
+	
+
+
