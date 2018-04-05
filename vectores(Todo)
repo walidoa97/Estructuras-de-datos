@@ -75,7 +75,7 @@ void vector::ordenarvector(int v[],int dim){
 		{
 			for(j=i;j<dim;j++)
 			{
-				if(v[i] > v[j])
+				if(v[i] < v[j])
 				{
 					aux=v[i];
 					v[i]=v[j];
