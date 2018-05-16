@@ -1,0 +1,515 @@
+ejercicio1.-
+#pragma once
+#include <string.h>
+#include "stdafx.h"
+#include <iostream>
+#include <string>
+const int Max = 30;
+using namespace std;
+
+class Vector
+{
+
+private:
+	string V[Max];
+	int tam;
+public:
+	
+
+	Vector()
+	{
+		for (int i = 0; i < Max; i++)
+		{
+			V[i] = "";
+
+		}
+		tam = 0;
+	}
+
+	bool llena()
+	{
+		if (tam == Max)
+		{
+			return true;
+		}
+		else return false;
+	}
+
+	bool Vacio()
+	{
+		if (tam == 0)
+		{
+			return true;
+		}
+		else return false;
+	}
+
+	bool Ocupado(int pos)
+	{
+		if (V[pos] != "")
+		{
+			return true;
+		}
+		return false;
+	}
+
+	string getS( int pos)
+	{
+		return V[pos];
+	}
+
+	void setTam(int x)
+	{
+		tam = x;
+	}
+
+	void setS(int x, string a)
+	{
+		V[x] = a;
+	}
+
+	int getTam()
+	{
+		return tam;
+	}
+	
+	void Insertar(int pos, string X)
+	{
+		if (llena())
+		{
+			return;
+		}
+		else
+		{
+			V[pos] = X;
+		}
+		tam++;
+	}
+
+	void Registrar()
+	{
+		cout << " Registrando alumnos " << endl;
+		string X = "";
+		int num = 1;
+		if (llena())
+		{
+			return;
+		}
+		
+
+		for (int i = 0; i<tam; i = i+2)
+		{
+				cout << "Ingrese nombre del estudiante " <<num << " : " <<endl;
+				cin >>X;
+				V[i] = X;
+				cout << "Ingrese registro del estudiante " <<num << " : " <<endl;
+				cin >> X;
+				V[i+1] = X;
+				num++;
+		}
+		
+	}
+
+	void Show()
+	{
+		system("cls");
+		
+		cout << " Lista de alumnos " << endl;
+		
+		int num = 1;
+		{
+		for (int i = 0; i<tam; i = i+2)
+		{
+				cout << "Estudiante "<< num <<": "<<V[i]  <<endl;
+				cout << "Registro del estudiante " <<num <<": " <<V[i+1]  <<endl;
+				 num++;
+				}
+		}
+		
+	}
+
+	void specific(int pos)
+	{
+		int x = 1;
+		for (int i = 0; i<tam; i = i+2)
+		{
+			if (x == pos)
+				
+			{
+				cout << "Estudiante "<< x <<": "<<V[i]  <<endl;
+				cout << "Registro del estudiante " <<x <<": " <<V[i+1]  <<endl;
+				
+			}
+			x++;
+		}
+	}
+ };
+ 
+ MAG.h
+ #pragma once
+
+class MAG
+{
+private:
+	int M[20][20];
+	int C;
+	int F;
+	
+public:
+	MAG(void);
+	~MAG(void);
+	void CargarNotas(int, int);
+	void mostrarmatriz(int, int);
+	void Ejerciciob(int, int);
+	void Ejercicioc(int, int);
+	void Ejerciciod(int, int);
+	void Ejercicioa(int, int);
+
+	void magica();
+	int get_c();
+	int get_f();
+	void set_c(int);
+	void set_f(int);
+	
+};
+
+MAG.cpp
+#include "Stdafx.h"
+#include "MAG.h"
+#include "iostream"
+using namespace std;
+
+MAG::MAG(void)
+{
+}
+
+
+MAG::~MAG(void)
+{
+}
+
+int MAG::get_c()
+{
+	return C;
+}
+int MAG::get_f()
+{
+	return F;
+}
+
+void MAG::set_c(int y)
+{
+	C = y;
+}
+void MAG::set_f(int x)
+{
+	F = x;
+}
+void MAG::CargarNotas(int y, int x)
+{
+
+	cout << "Cargando Matriz" << endl;
+	for(int i=0;i<x;i++)
+	{
+		for(int j=0;j<y;j++)
+		{
+			cout << "Cargando las notas de la materia " << i+1 << endl;
+			cout<<"Introducir elemento ["<<i<<"] ["<<j<<"]:";
+			cin>>M[i][j];
+		}
+	}
+}
+
+void MAG::mostrarmatriz(int y, int x)
+{
+	cout << "Mostrar Matriz " << endl;
+	for(int i=0;i<x;i++)
+	{
+		for(int j=0;j<y;j++)
+		{
+			cout<<M[i][j]<<" \t ";
+		}
+		cout<<endl;
+	}
+}
+
+void MAG::Ejerciciob(int y, int x)
+{
+	int t = 0;
+	for(int i=0;i<x;i++)
+	{
+		t = 0;
+		for(int j=0;j<y;j++)
+		{
+			if (M[i][j]>=51)
+			{
+				t++;
+			}
+			
+		}
+		cout << " En la materia " <<i+1 << " Hay "<< t << " aprobados" <<endl;
+		cout<<endl;
+	}
+}
+
+void MAG::Ejercicioc(int y, int x)
+{
+	int t = 0;
+	for(int i=0;i<x;i++)
+	{
+		t = 0;
+		for(int j=0;j<y;j++)
+		{
+			if (M[i][j]<51)
+			{
+				t++;
+			}
+			
+		}
+		cout << " En la materia " <<i+1 << " Hay "<< t << " desaprobado" <<endl;
+		cout<<endl;
+	}
+}
+
+void MAG::Ejerciciod(int y, int x)
+{
+	float t = 0;
+	float w = 0;
+	for(int i=0;i<x;i++)
+	{
+		t = 0;
+		for(int j=0;j<y;j++)
+		{
+			t = M[i][j]+t;
+			
+		}
+		w = t / y;
+		cout << " En la materia " <<i+1 << " El promedio es "<< w <<endl;
+		cout<<endl;
+	}
+}
+
+void MAG::Ejercicioa(int y, int x)
+{
+	float t = 0;
+	float w = 0;
+	for(int i=0;i<x;i++)
+	{
+		t = 0;
+		
+			t = M[i][x-1]+t;
+				
+	}
+	cout << "El promedio del estudiante " << x << "es: "<<t/(F); 
+}
+main.cpp
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include "MAG.h"
+#include "Vector.h"
+#include <stdlib.h> 
+using namespace std;
+void main()
+{
+	string a;
+	Vector v1;
+	MAG M1,M2,M3;
+	int op, aux = 0;
+	int x, y, z;
+	cout<<endl<<"Ingresar matriz : "<<endl;
+	cout << "Ingrese cantidad de estudiantes " <<endl;
+	cin >> x;
+	cout << "ingrese cantidad de materias, maximo 7 " <<endl;
+	cin >> y;
+	
+	while(y >7)
+	{
+		system("cls");
+		cout << "El numero materias excedio las 7, por favor ingrese otro valor" << endl;
+		cin >> y;
+
+	}
+	v1.setTam(x*2);
+	M1.set_f(x);
+	M1.set_c(y);
+	system("cls");
+	M1.CargarNotas(x,y);
+	system("cls");
+	M1.mostrarmatriz(x,y);
+	system("cls");
+	v1.Registrar();
+	v1.Show();
+
+		
+				int sp;
+				cout << "Ingresar que estudiante quiere mostrar " << endl;
+				cin >> sp;
+		cout <<"***************************************EJERCICIO A*************************************"<<endl;
+			v1.specific(sp);
+			M1.Ejercicioa(sp,x);
+			cout << endl;
+				
+		cout <<"***************************************EJERCICIO B*************************************"<<endl;
+			M1.Ejerciciob(x,y);
+			
+		cout <<"***************************************EJERCICIO C*************************************"<<endl;
+				M1.Ejercicioc(x,y);
+				
+		cout <<"***************************************EJERCICIO D*************************************"<<endl;
+				M1.Ejerciciod(x,y);
+	getch();
+
+	
+}
+
+ejercicio2 .-
+COLA.h
+#pragma once
+const int full=100;
+class COLA
+{
+private:
+	int C[full];
+	int frente;
+	int final;
+
+public:
+	COLA(void);
+	~COLA(void);
+	bool vacia();
+	bool llena();
+	bool insertar(int x);
+	bool eliminar(int &x);
+	void mostrar();
+};
+
+COLA.cpp
+#include "StdAfx.h"
+#include "OLA.h"
+#include <iostream>
+using namespace std;
+
+COLA::COLA(void)
+{
+	frente=-1;
+	final=-1;
+}
+
+
+COLA::~COLA(void)
+{
+}
+
+bool COLA::vacia()
+{
+	if(frente==final)
+		return true;
+	else 
+		return false;
+}
+
+bool COLA::llena()
+{
+	if(final==full-1)
+		return true;
+	else 
+		return false;
+}
+bool COLA::insertar(int x)
+{
+	
+	if(llena()==false)
+	{
+		final++;
+		C[final]=x;
+		return true;
+	}
+	else
+	{
+		cout<<"La cola esta llena"<<endl;
+		return false;
+	}
+}
+bool COLA::eliminar(int &x)
+{
+	if(vacia()==true)
+	{
+		cout<<"La cola esta vacia"<<endl;
+		return false;
+	}
+	else
+	{
+		x=C[frente];
+		frente++;
+		for(int i=0;i<final;i++)
+		{
+			C[i]=C[i+1];
+		}
+		final--;
+		frente--;
+		return true;
+	}
+}
+void COLA::mostrar()
+{
+	if(vacia()==false)
+	{
+		for(int i=0;i<=final;i++)
+		{
+			cout<<C[i]<<"\t";
+		}
+	}
+	else
+	{
+		cout<<"La cola esta vacia"<<endl;
+	}
+}
+
+main.cpp
+#include "stdafx.h"
+#include "OLA.h"
+#include "iostream"
+#include "stdlib.h"
+#include "conio.h"
+using namespace std;
+void main()
+{
+	COLA COLA1;
+	int op,x;
+	do
+	{
+		cout<<"Digite la opcion: "<<endl;
+		cout<<"-----MENU-----"<<endl;
+		cout<<"1.-Ingresar elemento a la cola"<<endl;
+		cout<<"2.-Eliminar elemento de la cola"<<endl;
+		cout<<"3.-Mostrar cola"<<endl;
+		cout<<"0.-Salir"<<endl;
+		cin>>op;
+		switch(op)
+		{
+		case 1:
+			{
+				cout<<"Ingrese el numero: ";
+				cin>>x;
+				COLA1.insertar(x);
+				
+			}break;
+		case 2:
+			{
+				COLA1.eliminar(x);
+
+			}break;
+		case 3:
+			{
+				COLA1.mostrar();
+			}break;
+		case 4:
+			{
+			}default:break;
+		}
+		getch();
+		system("cls");
+	}while(op!=0);
+	getch();
+}
