@@ -1,0 +1,149 @@
+COLA.h
+#pragma once
+const int full=100;
+class COLA
+{
+private:
+	int C[full];
+	int frente;
+	int final;
+
+public:
+	COLA(void);
+	~COLA(void);
+	bool vacia();
+	bool llena();
+	bool insertar(int x);
+	bool eliminar(int &x);
+	void mostrar();
+};
+
+COLA.cpp
+#include "StdAfx.h"
+#include "OLA.h"
+#include <iostream>
+using namespace std;
+
+COLA::COLA(void)
+{
+	frente=-1;
+	final=-1;
+}
+
+
+COLA::~COLA(void)
+{
+}
+
+bool COLA::vacia()
+{
+	if(frente==final)
+		return true;
+	else 
+		return false;
+}
+
+bool COLA::llena()
+{
+	if(final==full-1)
+		return true;
+	else 
+		return false;
+}
+bool COLA::insertar(int x)
+{
+	
+	if(llena()==false)
+	{
+		final++;
+		C[final]=x;
+		return true;
+	}
+	else
+	{
+		cout<<"La cola esta llena"<<endl;
+		return false;
+	}
+}
+bool COLA::eliminar(int &x)
+{
+	if(vacia()==true)
+	{
+		cout<<"La cola esta vacia"<<endl;
+		return false;
+	}
+	else
+	{
+		x=C[frente];
+		frente++;
+		for(int i=0;i<final;i++)
+		{
+			C[i]=C[i+1];
+		}
+		final--;
+		frente--;
+		return true;
+	}
+}
+void COLA::mostrar()
+{
+	if(vacia()==false)
+	{
+		for(int i=0;i<=final;i++)
+		{
+			cout<<C[i]<<"\t";
+		}
+	}
+	else
+	{
+		cout<<"La cola esta vacia"<<endl;
+	}
+}
+
+main.cpp
+#include "stdafx.h"
+#include "OLA.h"
+#include "iostream"
+#include "stdlib.h"
+#include "conio.h"
+using namespace std;
+void main()
+{
+	COLA COLA1;
+	int op,x;
+	do
+	{
+		cout<<"Digite la opcion: "<<endl;
+		cout<<"-----MENU-----"<<endl;
+		cout<<"1.-Ingresar elemento a la cola"<<endl;
+		cout<<"2.-Eliminar elemento de la cola"<<endl;
+		cout<<"3.-Mostrar cola"<<endl;
+		cout<<"0.-Salir"<<endl;
+		cin>>op;
+		switch(op)
+		{
+		case 1:
+			{
+				cout<<"Ingrese el numero: ";
+				cin>>x;
+				COLA1.insertar(x);
+				
+			}break;
+		case 2:
+			{
+				COLA1.eliminar(x);
+
+			}break;
+		case 3:
+			{
+				COLA1.mostrar();
+			}break;
+		case 4:
+			{
+			}default:break;
+		}
+		getch();
+		system("cls");
+	}while(op!=0);
+	getch();
+}
