@@ -1,0 +1,2155 @@
+//categoria.cpp
+#include "StdAfx.h"
+#include "categoria.h"
+
+
+categoria::categoria(void)
+{
+	tipo[0]='\0';
+	estado=' ';
+}
+
+void categoria::setTipo(char *t){
+	strcat(tipo,t);
+}
+
+string categoria::getTipo(){
+	string t(tipo);
+	return t;
+}
+
+void categoria::setEstado(char e){
+	estado=e;
+}
+
+char categoria::getEstado(){
+	return estado;
+}
+
+//categoria.h
+#pragma once
+#include <string.h>
+#include <iostream>
+#include <conio.h>
+
+using namespace std;
+
+const int MAX=50;
+
+class categoria{
+protected:
+	char tipo[MAX];
+	char estado;
+public:
+	categoria(void);
+	void setTipo(char *t);
+	string getTipo();
+
+	void setEstado(char e);
+	char getEstado();
+
+};
+
+//cliente.cpp
+#include "StdAfx.h"
+#include "cliente.h"
+
+
+cliente::cliente(void)
+{
+	carnet=0;
+	edad=0;
+	idCliente=0;
+	telefono=0;
+	nombre[0]=' ';
+	email[0]=' ';
+	apellido[0]=' ';
+	estado='E';
+	pseudonimo[0]='\0';
+}
+void cliente::setPseudonimo(char *t){
+	strcat(pseudonimo,t);
+}
+
+string cliente::getPseudonimo(){
+	string t(pseudonimo);
+	return t;
+}
+void cliente::setNombre(char *t)
+{
+	strcat(nombre,t);
+}
+string cliente::getNombre()
+{
+	string t(nombre);
+	return t;
+}
+void cliente::setApellido(char *t)
+{
+	strcat(apellido,t);
+}
+string cliente::getApellido()
+{
+	string t(apellido);
+	return t;
+}
+void cliente::setEmail(char *t)
+{
+	strcat(email,t);
+}
+string cliente::getEmail()
+{
+	string t(email);
+	return t;
+}
+void cliente::setCarnet(int n)
+{
+	carnet=n;
+}
+int cliente::getCarnet()
+{
+	return carnet;
+}
+void cliente::setEdad(int n)
+{
+	edad=n;
+}
+int cliente::getEdad()
+{
+	return edad;
+}
+void cliente::setIdcliente(int n)
+{
+	idCliente=n;
+}
+int cliente::getIdcliente()
+{
+	return idCliente;
+}
+void cliente::setTelefono(int n)
+{
+	telefono=n;
+}
+int cliente::getTelefono()
+{
+	return telefono;
+}
+void cliente::setEstado(char t)
+{
+	estado=t;
+}
+char cliente::getEstado()
+{
+	return estado;
+}
+int cliente::generarIdcliente()
+{
+    FILE *ptr;
+    int n = 1;
+    ptr = fopen("cliente.dat", "rb");
+    if (ptr != NULL)
+    {
+        fseek(ptr, 0, SEEK_END);
+        n = ftell(ptr) / sizeof(*this) + 1;
+        fclose(ptr);
+    }
+    return n;
+}
+void cliente::cargar(TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono)
+{
+	string n,a,e,f;
+	string x,y,z;
+		n=marshal_as<std::string>(tnombre->Text);
+		a=marshal_as<std::string>(tapellido->Text);
+		e=marshal_as<std::string>(temail1->Text);
+		f=marshal_as<std::string>(temail2->Text);
+	strcpy(nombre,n.c_str());
+	strcpy(apellido,a.c_str());
+	x=e+'@';
+	y=f+".com";
+	z=x+y;
+	strcpy(email,z.c_str());
+	setEdad(System::Convert::ToInt32(tedad->Text));
+	setCarnet(System::Convert::ToInt32(tcarnet->Text));
+	setTelefono(System::Convert::ToInt32(ttelefono->Text));
+	setIdcliente(generarIdcliente());
+	setEstado('A');
+
+}
+void cliente::reset_grilla(DataGridView^ grilla_b_cliente)
+{
+	grilla_b_cliente->RowCount=1;
+	grilla_b_cliente->ColumnCount=7;
+}
+void cliente::mostrar(DataGridView^ grilla_b_cliente)
+{
+	reset_grilla(grilla_b_cliente);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+	
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				objeto_grilla(grilla_b_cliente,getNombre(),getApellido(),getEmail(),getEdad(),getCarnet(),getTelefono(),i);
+				i++;
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+		fclose(ptr);
+	}
+}
+void cliente::objeto_grilla(DataGridView^ grilla_b_cliente,string nom,string apell, string mail, int e,int c, int t,int i)
+{
+	grilla_b_cliente->RowCount=30;
+	grilla_b_cliente->ColumnCount=7;
+		grilla_b_cliente->Rows[i]->Cells[0]->Value=System::Convert::ToString(idCliente);
+		grilla_b_cliente->Rows[i]->Cells[1]->Value=marshal_as<System::String^>(nom);
+		grilla_b_cliente->Rows[i]->Cells[2]->Value=marshal_as<System::String^>(apell);
+		grilla_b_cliente->Rows[i]->Cells[4]->Value=marshal_as<System::String^>(mail);
+		grilla_b_cliente->Rows[i]->Cells[5]->Value=System::Convert::ToString(e);
+		grilla_b_cliente->Rows[i]->Cells[3]->Value=System::Convert::ToString(c);
+		grilla_b_cliente->Rows[i]->Cells[6]->Value=System::Convert::ToString(t);
+}
+void cliente::guardar()
+{
+	FILE*ptr;
+	ptr=fopen("cliente.dat","ab");
+	fwrite(&*this,sizeof(*this),1,ptr);
+	fclose(ptr);
+}
+void cliente::modificarCliente(TextBox^ tmodificar,TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono)
+{
+    int id;
+	validaciones a;
+	string email1,email2;
+	id=System::Convert::ToInt32(tmodificar->Text);
+    FILE *ptr ;
+	ptr= fopen("cliente.dat", "r+b");
+    if (ptr != NULL)
+    {
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fread(&*this, sizeof(*this), 1, ptr);
+		tnombre->Text=marshal_as<System::String^>(getNombre());
+		tapellido->Text=marshal_as<System::String^>(getApellido());
+		tcarnet->Text=System::Convert::ToString(getCarnet());
+		email1=a.SepararHastaA(getEmail());
+		email2=a.SepararAntesCom(getEmail());
+		temail1->Text=marshal_as<System::String^>(email1);
+		temail2->Text=marshal_as<System::String^>(email2);
+		tedad->Text=System::Convert::ToString(getEdad());;
+		ttelefono->Text=System::Convert::ToString(getTelefono());
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fwrite(&*this, sizeof(*this), 1, ptr);
+        fclose(ptr);
+    }
+    else cout << "[Archivo no existe]" << endl;
+}
+void cliente::guardar_modificado(TextBox^ tmodificar,TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono)
+{
+	int id;
+	string n,a,e,f;
+	string x,y,z;
+	id=System::Convert::ToInt32(tmodificar->Text);
+    FILE *ptr ;
+	ptr= fopen("cliente.dat", "r+b");
+    if (ptr != NULL)
+    {
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fread(&*this, sizeof(*this), 1, ptr);
+		string n,a,e;
+		n=marshal_as<std::string>(tnombre->Text);
+		a=marshal_as<std::string>(tapellido->Text);
+		e=marshal_as<std::string>(temail1->Text);
+		f=marshal_as<std::string>(temail2->Text);
+	strcpy(nombre,n.c_str());
+	strcpy(apellido,a.c_str());
+	x=e+'@';
+	y=f+".com";
+	z=x+y;
+	strcpy(email,z.c_str());
+	setEdad(System::Convert::ToInt32(tedad->Text));
+	setCarnet(System::Convert::ToInt32(tcarnet->Text));
+	setTelefono(System::Convert::ToInt32(ttelefono->Text));
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fwrite(&*this, sizeof(*this), 1, ptr);
+        fclose(ptr);
+    }
+    else cout << "[Archivo no existe]" << endl;
+}
+void cliente::eliminarCliente(TextBox^ teliminar)
+{
+    int id;
+	id=System::Convert::ToInt32(teliminar->Text);
+    FILE *ptr ;
+	ptr= fopen("cliente.dat", "r+b");
+    if (ptr != NULL)
+    {
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fread(&*this, sizeof(*this), 1, ptr);
+        setEstado('E');
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fwrite(&*this, sizeof(*this), 1, ptr);
+        fclose(ptr);
+    }
+    else cout << "[Archivo no existe]" << endl;
+}
+void cliente::buscarCliente(TextBox^ tbuscar,DataGridView^ grilla_b_cliente)
+{
+    reset_grilla(grilla_b_cliente);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+	
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getIdcliente())
+				{
+				objeto_grilla(grilla_b_cliente,getNombre(),getApellido(),getEmail(),getEdad(),getCarnet(),getTelefono(),i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+		fclose(ptr);
+	}
+	
+}
+void cliente::buscarCliente_apellido(TextBox^ tbuscar,DataGridView^ grilla_b_cliente)
+{
+    reset_grilla(grilla_b_cliente);
+	string n;
+	n=marshal_as<std::string>(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+	
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(n==getApellido())
+				{
+				objeto_grilla(grilla_b_cliente,getNombre(),getApellido(),getEmail(),getEdad(),getCarnet(),getTelefono(),i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+		fclose(ptr);
+	}
+
+}
+void cliente::buscarCliente_carnet(TextBox^ tbuscar,DataGridView^ grilla_b_cliente)
+{
+    reset_grilla(grilla_b_cliente);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+	
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getCarnet())
+				{
+				objeto_grilla(grilla_b_cliente,getNombre(),getApellido(),getEmail(),getEdad(),getCarnet(),getTelefono(),i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+		fclose(ptr);
+	}
+	
+}
+bool cliente::verifId_existe(TextBox^ tmodificar){
+	int id;
+	id=System::Convert::ToInt32(tmodificar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getIdcliente())
+				{
+				return true;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+		fclose(ptr);
+	}
+	return false;
+}
+bool cliente::verifCi_existe(TextBox^ elemento,TextBox^ elemento2){
+	int id,id2;
+	id=System::Convert::ToInt32(elemento->Text);
+	id2=System::Convert::ToInt32(elemento2->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getCarnet()&&id2==getTelefono())
+				{
+				return true;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+		fclose(ptr);
+	}
+	
+	return false;
+}
+cliente cliente::retornar_id(int n)
+{
+	cliente a;
+	int id=System::Convert::ToInt32(n);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getIdcliente())
+				{
+				a=*this;
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+		fclose(ptr);
+	}
+	
+	return a;
+}
+cliente cliente::retornar_carnet(int n)
+{
+	cliente a;
+	int id=System::Convert::ToInt32(n);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getCarnet())
+				{
+				a=*this;
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+			fclose(ptr);
+	}
+
+	return a;
+}
+cliente cliente::retornar_telefono(int n)
+{
+	cliente a;
+	int id=System::Convert::ToInt32(n);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getTelefono())
+				{
+				a=*this;
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+		fclose(ptr);
+	}
+	
+	return a;
+}
+cliente cliente::retornar_apellido(string n)
+{
+	cliente a;
+	
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(n==getApellido())
+				{
+				a=*this;
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+		fclose(ptr);
+	}
+	
+	return a;
+}
+
+//cliente.h
+#pragma once
+#include <iostream>
+#include "conio.h"
+#include <string>
+#include <msclr\marshal_cppstd.h>
+#include "validaciones.h"
+
+const int MAXX=50;
+using namespace System::Windows::Forms;
+using namespace std;
+using namespace msclr::interop;
+
+class cliente
+{
+	char pseudonimo[MAXX];
+	char nombre[MAXX];
+	char apellido[MAXX];
+	int carnet;
+	char email[MAXX];
+	int edad;
+	int idCliente;
+	int telefono;
+	char estado;
+
+public:
+	cliente(void);
+	void setPseudonimo(char *t);
+	string getPseudonimo();
+	void setNombre(char *t);
+	string getNombre();
+	void setEstado(char t);
+	char getEstado();
+	void setApellido(char *t);
+	string getApellido();
+	void setCarnet(int n);
+	int getCarnet();
+	void setEmail(char *t);
+	string getEmail();
+	void setEdad(int n);
+	int getEdad();
+	void setIdcliente(int n);
+	int getIdcliente();
+	void setTelefono(int n);
+	int getTelefono();
+	void cargar(TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono);
+	
+	void mostrar(DataGridView^ grilla_b_cliente);
+
+	void guardar();
+	void traer();
+	void objeto_grilla(DataGridView^ grilla_b_cliente,string nom,string apell, string mail, int e,int c, int t,int i);
+	void eliminarCliente(TextBox^ teliminar);
+	int generarIdcliente();
+	void reset_grilla(DataGridView^ grilla_b_cliente);
+	void modificarCliente(TextBox^ tmodificar,TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono);
+	void guardar_modificado(TextBox^ tmodificar,TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono);
+	void buscarCliente(TextBox^ tbuscar,DataGridView^ grilla_b_cliente);
+	void buscarCliente_apellido(TextBox^ tbuscar,DataGridView^ grilla_b_cliente);
+	void buscarCliente_carnet(TextBox^ tbuscar,DataGridView^ grilla_b_cliente);
+	
+	bool verifCi_existe(TextBox^ elemento,TextBox^ elemento2);
+	bool verifId_existe(TextBox^ tmodificar);
+	cliente retornar_id(int n);
+	cliente retornar_carnet(int n);
+	cliente retornar_telefono(int n);
+	cliente retornar_apellido(string n);
+};
+
+//empleado.h
+#pragma once
+#include <iostream>
+#include "conio.h"
+#include "validaciones.h"
+#include <string>
+#include <msclr\marshal_cppstd.h>
+
+const int M=50;
+using namespace System::Windows::Forms;
+using namespace std;
+using namespace msclr::interop;
+class empleado
+{
+	char nombre[M];
+	char apellido[M];
+	int edad;
+	int id;
+	int telefono;
+	char email[M];
+	int ci;
+	char fechaInicio[11];
+	float sueldo;
+	char estado;
+public:
+	empleado(void);
+	void setNombre(char *n);
+	void setApellido(char *a);
+	void setEdad(int);
+	void setId(int);
+	void setTelefono(int);
+	void setEmail(char *e);
+	void setCi(int);
+	void setFechaInicio(char *f);
+	void setSueldo(float);
+	void setEstado(char);
+	/////
+	string getNombre();
+	string getApellido();
+	int getEdad();
+	int getId();
+	int getTelefono();
+	string getEmail();
+	int getCi();
+	string getFechaInicio();
+	float getSueldo();
+	char getEstado();
+
+	int generarIdEmpleado();
+	void cargarArchivoEmpleado();
+
+	void eliminarEmpleado(int ID);
+	bool verif_en_Renta_paraEliminar(int ID);
+	void cargar_empleado(TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono,TextBox^ tsueldo,TextBox^ tfecha1,TextBox^ tfecha2,TextBox^ tfecha3);
+	void mostrar(DataGridView^ grilla_empleado);
+	void reset_grilla(DataGridView^ grilla_empleado);
+	void objeto_grilla(DataGridView^ grilla_empleado,int i);
+	void eliminarEmpleado(TextBox^ teliminar);
+	void modificarEmpleado(TextBox^ tmodificar,TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono,TextBox^ tsueldo,TextBox^ tfecha1,TextBox^ tfecha2,TextBox^ tfecha3);
+	void guardar_modificadoEmpleado(TextBox^ tmodificar,TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono,TextBox^ tsueldo,TextBox^ tfecha1,TextBox^ tfecha2,TextBox^ tfecha3);
+	
+	
+	void buscar_id_empleado(TextBox^ tbuscar,DataGridView^ grilla_empleado);
+	void buscar_nombre_empleado(TextBox^ tbuscar,DataGridView^ grilla_empleado);
+	void buscar_apellido_empleado(TextBox^ tbuscar,DataGridView^ grilla_empleado);
+	void buscar_carnet_empleado(TextBox^ tbuscar,DataGridView^ grilla_empleado);
+
+	bool verifCi_existe(TextBox^ elemento,TextBox^ elemento2);
+	bool verifId_existe(TextBox^ tmodificar);
+
+};
+
+//empleado.cpp
+#include "StdAfx.h"
+#include "empleado.h"
+
+empleado::empleado(void)
+{
+	nombre[0]='\0';
+	apellido[0]='\0';
+	edad=0;
+	id=0;
+	telefono=0;
+	email[0]='\0';
+	ci=0;
+	fechaInicio[0]='\0';
+	sueldo=0;
+	estado='\0';
+}
+void empleado::setNombre(char *n){
+	strcat(nombre,n);
+}
+string empleado::getNombre(){
+	string t(nombre);
+	return t;
+}
+void empleado::setApellido(char *a){
+	strcat(apellido,a);
+}
+string empleado::getApellido(){
+	string t(apellido);
+	return t;
+}
+void empleado::setEdad(int a){
+	edad = a;
+}
+int empleado::getEdad(){
+	return edad;
+}
+void empleado::setId(int a){
+	id = a;
+}
+int empleado::getId(){
+	return id;
+}
+void empleado::setTelefono(int a){
+	telefono = a;
+}
+int empleado::getTelefono(){
+	return telefono;
+}
+void empleado::setEmail(char *e){
+	strcat(email,e);
+}
+string empleado::getEmail(){
+	string t(email);
+	return t;
+}
+void empleado::setCi(int a){
+	ci = a;
+}
+int empleado::getCi(){
+	return ci;
+}
+void empleado::setFechaInicio(char *f){
+	strcat(fechaInicio,f);
+}
+string empleado::getFechaInicio(){
+	string t(fechaInicio);
+	return t;
+}
+void empleado::setSueldo(float a){
+	sueldo = a;
+}
+float empleado::getSueldo(){
+	return sueldo;
+}
+void empleado::setEstado(char a){
+	estado = a;
+}
+char empleado::getEstado(){
+	return estado;
+}
+int empleado::generarIdEmpleado()
+{
+	FILE *ptr;
+	int n = 1;
+	ptr = fopen("empleado.dat", "rb");
+	if (ptr != NULL)
+	{
+		fseek(ptr, 0, SEEK_END);
+		n = ftell(ptr) / sizeof(*this) + 1;
+		fclose(ptr);
+	}
+	return n;
+}
+void empleado::cargarArchivoEmpleado(){
+	FILE*ptr;
+	ptr=fopen("empleado.dat","ab");
+	fwrite(&*this,sizeof(*this),1,ptr);
+	fclose(ptr);
+}
+
+void empleado::cargar_empleado(TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono,TextBox^ tsueldo,TextBox^ tfecha1,TextBox^ tfecha2,TextBox^ tfecha3)
+{
+	string n,a,e,f,f1,f2,f3;
+	string x,y,z;
+	n=marshal_as<std::string>(tnombre->Text);
+	a=marshal_as<std::string>(tapellido->Text);
+
+	e=marshal_as<std::string>(temail1->Text);
+	f=marshal_as<std::string>(temail2->Text);
+
+	f1=marshal_as<std::string>(tfecha1->Text);
+	f2=marshal_as<std::string>(tfecha2->Text);
+	f3=marshal_as<std::string>(tfecha3->Text);
+	strcpy(nombre,n.c_str());
+	strcpy(apellido,a.c_str());
+	x=e+'@';
+	y=f+".com";
+	z=x+y;
+	strcpy(email,z.c_str());
+	x=f1+'/';
+	y=f2+'/';
+	z=x+y+f3;
+	strcpy(fechaInicio,z.c_str());
+	setEdad(System::Convert::ToInt32(tedad->Text));
+	setCi(System::Convert::ToInt32(tcarnet->Text));
+	setTelefono(System::Convert::ToInt32(ttelefono->Text));
+	setSueldo(System::Convert::ToDouble(tsueldo->Text));
+	setId(generarIdEmpleado());
+	setEstado('A');
+}
+void empleado::mostrar(DataGridView^ grilla_empleado)
+{
+	reset_grilla(grilla_empleado);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("empleado.dat","rb");
+	if(ptr!=NULL){ 
+
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				objeto_grilla(grilla_empleado,i);
+				i++;
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+
+}
+void empleado::objeto_grilla(DataGridView^ grilla_empleado,int i)
+{
+	grilla_empleado->RowCount=30;
+	grilla_empleado->ColumnCount=9;
+	grilla_empleado->Rows[i]->Cells[0]->Value=System::Convert::ToString(getId());
+	grilla_empleado->Rows[i]->Cells[1]->Value=marshal_as<System::String^>(getNombre());
+	grilla_empleado->Rows[i]->Cells[2]->Value=marshal_as<System::String^>(getApellido());
+	grilla_empleado->Rows[i]->Cells[3]->Value=marshal_as<System::String^>(getEmail());
+	grilla_empleado->Rows[i]->Cells[4]->Value=marshal_as<System::String^>(getFechaInicio());
+	grilla_empleado->Rows[i]->Cells[5]->Value=System::Convert::ToString(getEdad());
+	grilla_empleado->Rows[i]->Cells[6]->Value=System::Convert::ToString(getCi());
+	grilla_empleado->Rows[i]->Cells[7]->Value=System::Convert::ToString(getTelefono());
+	grilla_empleado->Rows[i]->Cells[8]->Value=System::Convert::ToString(getSueldo());
+}
+void empleado::reset_grilla(DataGridView^ grilla_empleado)
+{
+	grilla_empleado->RowCount=1;
+	grilla_empleado->ColumnCount=9;
+}
+void empleado::eliminarEmpleado(TextBox^ teliminar)
+{
+	int id;
+	id=System::Convert::ToInt32(teliminar->Text);
+	FILE *ptr ;
+	ptr= fopen("empleado.dat", "r+b");
+	if (ptr != NULL)
+	{
+		fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+		fread(&*this, sizeof(*this), 1, ptr);
+		setEstado('E');
+		fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+		fwrite(&*this, sizeof(*this), 1, ptr);
+		fclose(ptr);
+	}
+}
+void empleado::modificarEmpleado(TextBox^ tmodificar,TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono,TextBox^ tsueldo,TextBox^ tfecha1,TextBox^ tfecha2,TextBox^ tfecha3)
+{
+	string email1,email2;
+	string f1,f2,f3;
+	validaciones a;
+	int id;
+	id=System::Convert::ToInt32(tmodificar->Text);
+	FILE *ptr ;
+	ptr= fopen("empleado.dat", "rb");
+	if (ptr != NULL)
+	{
+		fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+		fread(&*this, sizeof(*this), 1, ptr);
+		tnombre->Text=marshal_as<System::String^>(getNombre());
+		tapellido->Text=marshal_as<System::String^>(getApellido());
+
+		tcarnet->Text=System::Convert::ToString(getCi());
+
+		email1=a.SepararHastaA(getEmail());
+		email2=a.SepararAntesCom(getEmail());
+
+		temail1->Text=marshal_as<System::String^>(email1);
+		temail2->Text=marshal_as<System::String^>(email2);
+
+		f1=a.recortarDia(getFechaInicio());
+		f2=a.recortarMes(getFechaInicio());
+		f3=a.recortarAnho(getFechaInicio());
+
+		tfecha1->Text=marshal_as<System::String^>(f1);
+		tfecha2->Text=marshal_as<System::String^>(f2);
+		tfecha3->Text=marshal_as<System::String^>(f3);
+
+		tedad->Text=System::Convert::ToString(getEdad());
+		ttelefono->Text=System::Convert::ToString(getTelefono());
+		tsueldo->Text=System::Convert::ToString(getSueldo());
+		fclose(ptr);
+	}
+}
+
+
+
+void empleado::guardar_modificadoEmpleado(TextBox^ tmodificar,TextBox^ tnombre,TextBox^ tapellido,TextBox^ tcarnet,TextBox^ temail1,TextBox^ temail2,TextBox^ tedad,TextBox^ ttelefono,TextBox^ tsueldo,TextBox^ tfecha1,TextBox^ tfecha2,TextBox^ tfecha3)
+{
+	int id;
+	id=System::Convert::ToInt32(tmodificar->Text);
+	FILE *ptr ;
+	ptr= fopen("empleado.dat", "r+b");
+	if (ptr != NULL)
+	{
+		fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+		fread(&*this, sizeof(*this), 1, ptr);
+		string n,a,e,f,f1,f2,f3;
+		string x,y,z;
+		n=marshal_as<std::string>(tnombre->Text);
+		a=marshal_as<std::string>(tapellido->Text);
+
+		e=marshal_as<std::string>(temail1->Text);
+		f=marshal_as<std::string>(temail2->Text);
+
+		f1=marshal_as<std::string>(tfecha1->Text);
+		f2=marshal_as<std::string>(tfecha2->Text);
+		f3=marshal_as<std::string>(tfecha3->Text);
+		strcpy(nombre,n.c_str());
+		strcpy(apellido,a.c_str());
+		x=e+'@';
+		y=f+".com";
+		z=x+y;
+		strcpy(email,z.c_str());
+		x=f1+'/';
+		y=f2+'/';
+		z=x+y+f3;
+		strcpy(fechaInicio,z.c_str());
+		setEdad(System::Convert::ToInt32(tedad->Text));
+		setCi(System::Convert::ToInt32(tcarnet->Text));
+		setTelefono(System::Convert::ToInt32(ttelefono->Text));
+		setSueldo(System::Convert::ToDouble(tsueldo->Text));
+		fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+		fwrite(&*this, sizeof(*this), 1, ptr);
+		fclose(ptr);
+	}
+	else cout << "[Archivo no existe]" << endl;
+}
+void empleado::buscar_id_empleado(TextBox^ tbuscar,DataGridView^ grilla_empleado)
+{
+	reset_grilla(grilla_empleado);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("empleado.dat","rb");
+	if(ptr!=NULL){ 
+
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getId())
+				{
+					objeto_grilla(grilla_empleado,i);
+					i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void empleado::buscar_carnet_empleado(TextBox^ tbuscar,DataGridView^ grilla_empleado)
+{
+	reset_grilla(grilla_empleado);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("empleado.dat","rb");
+	if(ptr!=NULL){ 
+
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getCi())
+				{
+					objeto_grilla(grilla_empleado,i);
+					i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void empleado::buscar_nombre_empleado(TextBox^ tbuscar,DataGridView^ grilla_empleado)
+{
+	reset_grilla(grilla_empleado);
+	string n;
+	n=marshal_as<std::string>(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("empleado.dat","rb");
+	if(ptr!=NULL){ 
+
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(n==getNombre())
+				{
+					objeto_grilla(grilla_empleado,i);
+					i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void empleado::buscar_apellido_empleado(TextBox^ tbuscar,DataGridView^ grilla_empleado)
+{
+	reset_grilla(grilla_empleado);
+	string n;
+	n=marshal_as<std::string>(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("empleado.dat","rb");
+	if(ptr!=NULL){ 
+
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(n==getApellido())
+				{
+					objeto_grilla(grilla_empleado,i);
+					i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+
+
+bool empleado::verifId_existe(TextBox^ tmodificar){
+	int id;
+	id=System::Convert::ToInt32(tmodificar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("empleado.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getId())
+				{
+				return true;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+	return false;
+}
+bool empleado::verifCi_existe(TextBox^ elemento,TextBox^ elemento2){
+	int id,id2;
+	id=System::Convert::ToInt32(elemento->Text);
+	id2=System::Convert::ToInt32(elemento2->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("empleado.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getCi()&&id2==getTelefono())
+				{
+				return true;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+	return false;
+}
+
+//renta.cpp
+
+#include "StdAfx.h"
+#include "renta.h"
+
+
+renta::renta(void)
+{
+	id=0;
+	precioRenta=0;
+	garantia=0;
+	fechaInicio[0]='\0';
+	cantidadDias=0;
+	idCliente=0;
+	idEmpleado=0;
+	idVehiculo=0;
+	estado='\0';
+}
+void renta::setId(int i){
+	id=i;
+}
+int renta::getId(){
+	return id;
+}
+void renta::setPrecioRenta(float p){
+	precioRenta=p;
+}
+float renta::getPrecioRenta(){
+	return precioRenta;
+}
+void renta::setGarantia(float g){
+	garantia=g;
+}
+float renta::getGarantia(){
+	return garantia;
+}
+void renta::setFechaInicio(char *f){
+	strcat(fechaInicio,f);
+}
+string renta::getFechaInicio(){
+	string f(fechaInicio);
+	return f;
+}
+void renta::setIdCliente(int iC){
+	idCliente=iC;
+}
+int renta::getIdCliente(){
+	return idCliente;
+}
+void renta::setIdEmpleado(int iE){
+	idEmpleado=iE;
+}
+int renta::getIdEmpleado(){
+	return idEmpleado;
+}
+void renta::setIdVehiculo(int iV){
+	idVehiculo=iV;
+}
+int renta::getIdVehiculo(){
+	return idVehiculo;
+}
+void renta::setCantidadDias(int c){
+	cantidadDias=c;
+}
+int renta::getCantidadDias(){
+	return cantidadDias;
+}
+void renta::setEstado(char e){ 
+	estado=e;
+}
+char renta::getEstado(){
+	return estado;
+}
+int renta::generarIdRenta(){
+	FILE *ptr;
+    int n = 1;
+    ptr = fopen("renta.dat", "rb");
+    if (ptr != NULL)
+    {
+        fseek(ptr, 0, SEEK_END);
+        n = ftell(ptr) / sizeof(*this) + 1;
+        fclose(ptr);
+    }
+    return n;
+}
+void renta::guardar(){
+	FILE*ptr;
+	ptr=fopen("renta.dat","ab");
+	fwrite(&*this,sizeof(*this),1,ptr);
+	fclose(ptr);
+}
+void renta::cargar(TextBox^ t_id_vehiculo,TextBox^ t_id_empleado,TextBox^ t_id_cliente,TextBox^ t_dia,TextBox^ t_mes,TextBox^ t_anho,TextBox^ t_cantidad,TextBox^ t_precio,TextBox^ t_garantia)
+{
+	vehiculo a;
+	string dia,mes,anho;
+	setIdVehiculo(System::Convert::ToInt32(t_id_vehiculo->Text));
+	setIdEmpleado(System::Convert::ToInt32(t_id_empleado->Text));
+	setIdCliente(System::Convert::ToInt32(t_id_cliente->Text));
+	dia=marshal_as<std::string>(t_dia->Text);
+	mes=marshal_as<std::string>(t_mes->Text);
+	anho=marshal_as<std::string>(t_anho->Text);
+	dia=dia+'/';dia=dia+mes;dia=dia+'/';dia=dia+anho;
+	strcpy(fechaInicio,dia.c_str());
+	setCantidadDias(System::Convert::ToInt32(t_cantidad->Text));
+	setPrecioRenta(System::Convert::ToDouble(t_precio->Text));
+	setGarantia(System::Convert::ToDouble(t_garantia->Text));
+	setId(generarIdRenta());
+	setEstado('A');
+}
+void renta::objeto_grilla(DataGridView^ grilla_renta,int i){
+	grilla_renta->RowCount=30;
+	grilla_renta->ColumnCount=8;
+	grilla_renta->Rows[i]->Cells[0]->Value=System::Convert::ToString(getId());
+	grilla_renta->Rows[i]->Cells[4]->Value=marshal_as<System::String^>(getFechaInicio());
+	grilla_renta->Rows[i]->Cells[5]->Value=System::Convert::ToString(getCantidadDias());
+	grilla_renta->Rows[i]->Cells[6]->Value=System::Convert::ToString(getPrecioRenta());
+	grilla_renta->Rows[i]->Cells[7]->Value=System::Convert::ToString(getGarantia());
+	grilla_renta->Rows[i]->Cells[1]->Value=System::Convert::ToString(getIdVehiculo());
+	grilla_renta->Rows[i]->Cells[2]->Value=System::Convert::ToString(getIdEmpleado());
+	grilla_renta->Rows[i]->Cells[3]->Value=System::Convert::ToString(getIdCliente());
+}
+void renta::mostrar(DataGridView^ grilla_renta){
+	reset_grilla(grilla_renta);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("renta.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				objeto_grilla(grilla_renta,i);
+				i++;
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void renta::reset_grilla(DataGridView^ grilla_renta){
+	grilla_renta->RowCount=1;
+	grilla_renta->ColumnCount=9;
+}
+void renta::eliminarRenta(TextBox^ teliminar){
+	int id;
+	id=System::Convert::ToInt32(teliminar->Text);
+    FILE *ptr ;
+	ptr= fopen("renta.dat", "r+b");
+    if (ptr != NULL)
+    {
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fread(&*this, sizeof(*this), 1, ptr);
+        setEstado('E');
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fwrite(&*this, sizeof(*this), 1, ptr);
+        fclose(ptr);
+    }
+    else cout << "[Archivo no existe]" << endl;
+}
+void renta::buscarRenta_IdRenta(TextBox^ tbuscar,DataGridView^ grilla_renta){
+	reset_grilla(grilla_renta);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("renta.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getId())
+				{
+				objeto_grilla(grilla_renta,i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void renta::buscarRenta_Idcliente(int id,DataGridView^ grilla_historial){
+	reset_grilla(grilla_historial);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("renta.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getIdCliente())
+				{
+				objeto_grilla(grilla_historial,i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void renta::buscarRenta_cantidad(TextBox^ tbuscar,DataGridView^ grilla_renta){
+	reset_grilla(grilla_renta);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("renta.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getCantidadDias())
+				{
+				objeto_grilla(grilla_renta,i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void renta::buscarRenta_IdVehiculo(TextBox^ tbuscar,DataGridView^ grilla_renta){
+	reset_grilla(grilla_renta);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("renta.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getIdVehiculo())
+				{
+				objeto_grilla(grilla_renta,i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void renta::buscarRenta_IdEmpleado(TextBox^ tbuscar,DataGridView^ grilla_renta){
+	reset_grilla(grilla_renta);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("renta.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getIdEmpleado())
+				{
+				objeto_grilla(grilla_renta,i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+bool renta::verificar_Id_existe(TextBox^ tmodificar){
+	int id;
+	id=System::Convert::ToInt32(tmodificar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("renta.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getId())
+				{
+				return true;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+	return false;
+}
+void renta::modificarRenta(TextBox^ tmodificar,TextBox^ t_id_vehiculo,TextBox^ t_id_empleado,TextBox^ t_id_cliente,TextBox^ t_dia,TextBox^ t_mes,TextBox^ t_anho,TextBox^ t_cantidad,TextBox^ t_precio,TextBox^ t_garantia)
+{
+    int id;
+	validaciones a;
+	string dia,mes,anho;
+	id=System::Convert::ToInt32(tmodificar->Text);
+    FILE *ptr ;
+	ptr= fopen("renta.dat", "r+b");
+    if (ptr != NULL)
+    {
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fread(&*this, sizeof(*this), 1, ptr);
+		t_id_vehiculo->Text=System::Convert::ToString(getIdVehiculo());
+		t_id_empleado->Text=System::Convert::ToString(getIdEmpleado());
+		t_id_cliente->Text=System::Convert::ToString(getIdCliente());;
+		t_cantidad->Text=System::Convert::ToString(getCantidadDias());
+		t_precio->Text=System::Convert::ToString(getPrecioRenta());
+		t_garantia->Text=System::Convert::ToString(getGarantia());
+		dia=a.recortarDia(getFechaInicio());
+		mes=a.recortarMes(getFechaInicio());
+		anho=a.recortarAnho(getFechaInicio());
+		t_dia->Text=marshal_as<System::String^>(dia);
+		t_mes->Text=marshal_as<System::String^>(mes);
+		t_anho->Text=marshal_as<System::String^>(anho);
+
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fwrite(&*this, sizeof(*this), 1, ptr);
+        fclose(ptr);
+    }
+    else cout << "[Archivo no existe]" << endl;
+}
+void renta::guardar_modificado(TextBox^ tmodificar,TextBox^ t_id_vehiculo,TextBox^ t_id_empleado,TextBox^ t_id_cliente,TextBox^ t_dia,TextBox^ t_mes,TextBox^ t_anho,TextBox^ t_cantidad,TextBox^ t_precio,TextBox^ t_garantia)
+{
+	int id;
+	vehiculo a;
+	string dia,mes,anho;
+	id=System::Convert::ToInt32(tmodificar->Text);
+    FILE *ptr ;
+	ptr= fopen("renta.dat", "r+b");
+    if (ptr != NULL)
+    {
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fread(&*this, sizeof(*this), 1, ptr);
+			setIdVehiculo(System::Convert::ToInt32(t_id_vehiculo->Text));
+			setIdEmpleado(System::Convert::ToInt32(t_id_empleado->Text));
+			setIdCliente(System::Convert::ToInt32(t_id_cliente->Text));
+			dia=marshal_as<std::string>(t_dia->Text);
+			mes=marshal_as<std::string>(t_mes->Text);
+			anho=marshal_as<std::string>(t_anho->Text);
+			dia=dia+'/';dia=dia+mes;dia=dia+'/';dia=dia+anho;
+			strcpy(fechaInicio,dia.c_str());
+			setCantidadDias(System::Convert::ToInt32(t_cantidad->Text));
+			setPrecioRenta(System::Convert::ToInt32(t_precio->Text));
+			setGarantia(System::Convert::ToInt32(t_garantia->Text));
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fwrite(&*this, sizeof(*this), 1, ptr);
+        fclose(ptr);
+    }
+    else cout << "[Archivo no existe]" << endl;
+}
+bool renta::verif_existe(TextBox^ elemento,TextBox^ elemento2,TextBox^ elemento3)
+{
+	cliente a;
+	empleado b;
+	vehiculo c;
+	if(a.verifId_existe(elemento)==true && c.verifId_existe(elemento2))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+float renta::obtenerPrecioAcumulado(TextBox^ tbuscar){
+	int id;
+	float aux;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("renta.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getId())
+				{
+				aux=aux+getPrecioRenta();
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+	return aux;
+}
+
+//renta.h
+#pragma once
+#include <iostream>
+#include "conio.h"
+#include <string>
+#include <msclr\marshal_cppstd.h>
+#include "vehiculo.h"
+#include "validaciones.h"
+#include "empleado.h"
+#include "cliente.h"
+
+using namespace System::Windows::Forms;
+using namespace std;
+using namespace msclr::interop;
+
+class renta
+{
+private:
+	int id;
+	float precioRenta;
+	float garantia;
+	char fechaInicio[11];
+	int cantidadDias;
+	int idCliente;
+	int idEmpleado;
+	int idVehiculo;
+	char estado;
+public:
+	renta(void);
+
+	void setId(int i);
+	int getId();
+
+	void setPrecioRenta(float p);
+	float getPrecioRenta();
+
+	void setGarantia(float p);
+	float getGarantia();
+
+	void setFechaInicio(char *f);
+	string getFechaInicio();
+
+	void setIdCliente(int iC);
+	int getIdCliente();
+
+	void setIdEmpleado(int iE);
+	int getIdEmpleado();
+
+	void setIdVehiculo(int iV);
+	int getIdVehiculo();
+
+	void setCantidadDias(int c);
+	int getCantidadDias();
+
+	void setEstado(char e);
+	char getEstado();
+
+	int generarIdRenta();
+	void guardar();
+	void cargar(TextBox^ t_id_vehiculo,TextBox^ t_id_empleado,TextBox^ t_id_cliente,TextBox^ t_dia,TextBox^ t_mes,TextBox^ t_anho,TextBox^ t_cantidad,TextBox^ t_precio,TextBox^ t_garantia);
+	void objeto_grilla(DataGridView^ grilla_renta,int i);
+	void mostrar(DataGridView^ grilla_renta);
+	void reset_grilla(DataGridView^ grilla_renta);
+	void eliminarRenta(TextBox^ teliminar);
+	bool verificar_Id_existe(TextBox^ tmodificar);
+	void modificarRenta(TextBox^ tmodificar,TextBox^ t_id_vehiculo,TextBox^ t_id_empleado,TextBox^ t_id_cliente,TextBox^ t_dia,TextBox^ t_mes,TextBox^ t_anho,TextBox^ t_cantidad,TextBox^ t_precio,TextBox^ t_garantia);
+	void guardar_modificado(TextBox^ tmodificar,TextBox^ t_id_vehiculo,TextBox^ t_id_empleado,TextBox^ t_id_cliente,TextBox^ t_dia,TextBox^ t_mes,TextBox^ t_anho,TextBox^ t_cantidad,TextBox^ t_precio,TextBox^ t_garantia);
+	void buscarRenta_IdRenta(TextBox^ tbuscar,DataGridView^ grilla_renta);
+	void buscarRenta_cantidad(TextBox^ tbuscar,DataGridView^ grilla_renta);
+	void buscarRenta_IdVehiculo(TextBox^ tbuscar,DataGridView^ grilla_renta);
+	void buscarRenta_IdEmpleado(TextBox^ tbuscar,DataGridView^ grilla_renta);
+	bool verif_existe(TextBox^ elemento,TextBox^ elemento2,TextBox^ elemento3);
+	void buscarRenta_Idcliente(int id,DataGridView^ grilla_historial);
+
+	float obtenerPrecioAcumulado(TextBox^ tbuscar);
+
+
+};
+
+
+//validaciones.cpp
+#include "StdAfx.h"
+#include "validaciones.h"
+
+
+validaciones::validaciones(void)
+{
+}
+
+//validaciones.h
+#pragma once
+#pragma once
+#include <iostream>
+#include "conio.h"
+#include <string>
+#include <msclr\marshal_cppstd.h>
+#include "categoria.h"
+
+using namespace System::Windows::Forms;
+using namespace std;
+using namespace msclr::interop;
+
+
+class validaciones
+{
+public:
+	validaciones(void);
+
+	bool soloNumeros(string temp)
+	{
+		for (int i = 0; i < temp.length(); i++)
+		{
+			if (!isdigit(temp[i])) return false;
+		}
+		return true;
+	}
+
+	bool soloLetras(string temp)
+	{
+		for (int i = 0; i < temp.length(); i++){
+			if((temp[i]>64&& temp[i]<91)||(temp[i]>96&& temp[i]<123))
+				return true;
+		}
+		return false;
+	}
+
+	bool soloDecimal(string temp)
+	{
+		int numeros = 0, puntos = 0;
+		for (int i = 0; i < temp.length(); i++)
+		{
+			if (isdigit(temp[i])) numeros++;
+			if (temp[i] == '.') puntos++;
+		}
+		if (numeros == temp.length() - 1 && puntos == 1) return true;
+		else return false;
+	}
+
+
+	bool verifEntero(TextBox^ elemento){
+		string a;
+		a=marshal_as<std::string>(elemento->Text);
+		if(soloNumeros(a)==true){
+			return true;
+		}else 
+			return false;
+	}
+
+	bool verifLetras(TextBox^ elemento){
+		string a;
+		a=marshal_as<std::string>(elemento->Text);
+		if(soloLetras(a)==true)
+			return true;
+		else 
+			return false;
+
+	}
+	bool verifLetrasSimbolos(TextBox^ elemento){
+		string a;
+		a=marshal_as<std::string>(elemento->Text);
+		for (int i = 0; i < a.length(); i++){
+			if((a[i]>64&& a[i]<91)||(a[i]>96&& a[i]<123)||(a[i]>32&& a[i]<58))
+				return true;
+		}
+		return false;
+
+	}
+
+	bool verifLetrasEspacios(TextBox^ elemento){
+		string a;
+		a=marshal_as<std::string>(elemento->Text);
+		for (int i = 0; i < a.length(); i++){
+			if((a[i]>64&& a[i]<91)||(a[i]>96&& a[i]<123)||a[i]==' ')
+				return true;
+		}
+		return false;
+
+	}
+
+	bool verifDecimal(TextBox^ elemento){
+		string a;
+		a=marshal_as<std::string>(elemento->Text);
+		if(soloDecimal(a)==true)
+			return true;
+		else 
+			return false;
+
+	}
+
+	int contarDigit(int a){
+		int i=0;
+		while(a>0){
+			a=a/10;
+			i++;
+		}
+		return i;
+	}
+
+
+	//vehiculo
+	bool validCapacidad(TextBox^ elemento){
+		if(verifEntero(elemento)==true){
+			int a=System::Convert::ToInt32(elemento->Text);
+				if(a>0&&a<8)
+					return true;
+				else 
+					return false;
+		}else 
+			return false;
+	}
+
+	bool validAnho(TextBox^ elemento){
+		if(verifEntero(elemento)==true){
+			int a=System::Convert::ToInt32(elemento->Text);
+				if(a>1999&&a<2019)
+					return true;
+				else 
+					return false;
+		}else 
+			return false;
+	}
+
+	bool validTipo(TextBox^ elemento){
+		if(verifLetras(elemento)==true){
+			string a;
+			a=marshal_as<std::string>(elemento->Text);
+			if(a=="moto" || a=="auto" || a=="camioneta" || a=="vagoneta" || a=="Moto" || a=="Auto" || a=="Camioneta" || a=="Vagoneta" )
+				return true;
+			else 
+				return false;
+
+		}else 
+		return false;
+	}
+
+	// clientes( nombres,apellidos,email)
+
+	bool validCarnet(TextBox^ elemento){
+		if(verifEntero(elemento)==true){
+			int a=System::Convert::ToInt32(elemento->Text);
+				if(contarDigit(a)>4 && contarDigit(a)<9)
+					return true;
+				else 
+					return false;
+		}else 
+			return false;
+	}
+	bool validTelf(TextBox^ elemento){
+		if(verifEntero(elemento)==true){
+			int a=System::Convert::ToInt32(elemento->Text);
+				if(contarDigit(a)==8)
+					return true;
+				else 
+					return false;
+		}else 
+			return false;
+	}
+	bool validEdad(TextBox^ elemento){
+		if(verifEntero(elemento)==true){
+			int a=System::Convert::ToInt32(elemento->Text);
+				if(a>17 && a <99)
+					return true;
+				else 
+					return false;
+		}else 
+			return false;
+	}
+	bool validDominio(TextBox^ elemento){
+		if(verifLetras(elemento)==true)
+			return true;
+		else 
+			return false;
+	}
+	bool validEmail(TextBox^ elemento){
+		if(verifLetrasSimbolos(elemento)==true)
+			return true;
+		else 
+			return false;
+	}
+	bool validNombreApellido(TextBox^ elemento){
+		if(verifLetrasEspacios(elemento)==true)
+			return true;
+		else 
+			return false;
+	}
+
+	string SepararHastaA( string A)
+	{
+		int pos = A.find("@");
+		string B  = A.substr(0,pos);
+		return B;
+	}
+
+	string SepararAntesCom(string A)
+	{
+		int pos = A.find("@");
+		string B = A.substr(pos+1,A.length()-1);
+		int pos2 = B.find(".");
+		string C = B.substr(0,pos2);
+		return C;
+	}
+
+	bool validSueldo(TextBox^ elemento){
+		if(verifEntero(elemento)==true){
+			int a=System::Convert::ToDouble(elemento->Text);
+				if(a>100 && a <10000)
+					return true;
+				else 
+					return false;
+		}else 
+			return false;
+	}
+
+	string recortarDia(string A){
+		int pos = A.find("/");
+		string B = A.substr(0,pos);
+		return B;
+	}
+
+	string recortarMes(string A){
+		int pos = A.find("/");
+		string B = A.substr(pos+1,A.length());
+		int pos2 = B.find("/");
+		string C = B.substr(0,pos2);
+		return C;
+	}
+
+	string recortarAnho(string A){
+		int pos = A.find("/");
+		string B = A.substr(pos+1,A.length());
+		int pos2 = B.find("/");
+		string C = B.substr(pos2+1,B.length());
+		return C;
+
+}
+
+
+};
+
+//vehiculo.h
+#pragma once
+#include <iostream>
+#include "conio.h"
+#include <string>
+#include <msclr\marshal_cppstd.h>
+#include "categoria.h"
+
+using namespace System::Windows::Forms;
+using namespace std;
+using namespace msclr::interop;
+
+
+class vehiculo:public categoria
+{
+	int idVehiculo;
+	float precioAuto;
+	int capacidad;
+	int anho;
+public:
+	vehiculo(void);
+
+	void setId(int i);
+	int getId();
+
+	void setPrecio(float p);
+	float getPrecio();
+
+	void setCapacidad(int pe);
+	int getCapacidad();
+
+	void setAnho(int a);
+	int getAnho();
+
+
+	int generarIdVehiculo();
+	void guardar();
+	void cargar(TextBox^ ttipo,TextBox^ tprecio,TextBox^ tanho,TextBox^ tcapacidad);
+	void objeto_grilla(DataGridView^ grilla_vehiculo,int i);
+	void mostrar(DataGridView^ grilla_vehiculo);
+	void reset_grilla(DataGridView^ grilla_vehiculo);
+	void eliminarVehiculo(TextBox^ teliminar);
+
+	void buscarVehiculo_Id(TextBox^ tbuscar,DataGridView^ grilla_vehiculo);
+	void buscarVehiculo_Tipo(TextBox^ tbuscar,DataGridView^ grilla_vehiculo);
+	void buscarVehiculo_Anho(TextBox^ tbuscar,DataGridView^ grilla_vehiculo);
+
+	void traer();
+	void guardar_modificado(TextBox^ tmodificar,TextBox^ ttipo,TextBox^ tprecio,TextBox^ tanho,TextBox^ tcapacidad);
+	void modificarVehiculo(TextBox^ tmodificar,TextBox^ ttipo,TextBox^ tprecio,TextBox^ tanho,TextBox^ tcapacidad);
+
+	bool verifId_existe(TextBox^ tmodificar);
+	vehiculo retornar(int id);
+};
+
+//vehiculo.cpp
+#include "StdAfx.h"
+#include "vehiculo.h"
+
+
+vehiculo::vehiculo(void)
+{
+	idVehiculo=0;
+	precioAuto=0;
+	capacidad=0;
+	anho=0;
+}
+
+void vehiculo::setId(int i){
+	idVehiculo=i;
+}
+int vehiculo::getId(){
+	return idVehiculo;
+}
+
+void vehiculo::setPrecio(float p){
+	precioAuto=p;
+}
+float vehiculo::getPrecio(){
+	return precioAuto;
+}
+
+void vehiculo::setCapacidad(int pe){
+	capacidad=pe;
+}
+int vehiculo::getCapacidad(){
+	return capacidad;
+}
+
+void vehiculo::setAnho(int a){
+	anho=a;
+}
+int vehiculo::getAnho(){
+	return anho;
+}
+
+int vehiculo::generarIdVehiculo()
+{
+    FILE *ptr;
+    int n = 1;
+    ptr = fopen("vehiculo.dat", "rb");
+    if (ptr != NULL)
+    {
+        fseek(ptr, 0, SEEK_END);
+        n = ftell(ptr) / sizeof(*this) + 1;
+        fclose(ptr);
+    }
+    return n;
+}
+
+void vehiculo::guardar()
+{
+	FILE*ptr;
+	ptr=fopen("vehiculo.dat","ab");
+	fwrite(&*this,sizeof(*this),1,ptr);
+	fclose(ptr);
+}
+
+void vehiculo::cargar(TextBox^ ttipo,TextBox^ tprecio,TextBox^ tanho,TextBox^ tcapacidad){
+	string n;
+	n=marshal_as<std::string>(ttipo->Text);
+	strcpy(tipo,n.c_str());
+	setPrecio(System::Convert::ToDouble(tprecio->Text));
+	setAnho(System::Convert::ToInt32(tanho->Text));
+	setCapacidad(System::Convert::ToInt32(tcapacidad->Text));
+	setId(generarIdVehiculo());
+	setEstado('A');
+}
+
+void vehiculo::objeto_grilla(DataGridView^ grilla_vehiculo,int i)//se mandan los datos a la grilla
+{
+	grilla_vehiculo->RowCount=30;
+	grilla_vehiculo->ColumnCount=5;
+		grilla_vehiculo->Rows[i]->Cells[0]->Value=System::Convert::ToString(getId());
+		grilla_vehiculo->Rows[i]->Cells[1]->Value=System::Convert::ToString(getPrecio());
+		grilla_vehiculo->Rows[i]->Cells[2]->Value=System::Convert::ToString(getCapacidad());
+		grilla_vehiculo->Rows[i]->Cells[3]->Value=marshal_as<System::String^>(getTipo());
+		grilla_vehiculo->Rows[i]->Cells[4]->Value=System::Convert::ToString(getAnho());
+}
+
+void vehiculo::reset_grilla(DataGridView^ grilla_vehiculo)
+{
+	grilla_vehiculo->RowCount=1;
+	grilla_vehiculo->ColumnCount=5;
+}
+
+void vehiculo::mostrar(DataGridView^ grilla_vehiculo){
+	reset_grilla(grilla_vehiculo);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("vehiculo.dat","rb");
+	if(ptr!=NULL){ 
+	
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				objeto_grilla(grilla_vehiculo,i);
+				i++;
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+
+void vehiculo::eliminarVehiculo(TextBox^ teliminar){
+	int id;
+	id=System::Convert::ToInt32(teliminar->Text);
+    FILE *ptr ;
+	ptr= fopen("vehiculo.dat", "r+b");
+    if (ptr != NULL)
+    {
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fread(&*this, sizeof(*this), 1, ptr);
+        setEstado('E');
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fwrite(&*this, sizeof(*this), 1, ptr);
+        fclose(ptr);
+    }
+    
+}
+
+void vehiculo::buscarVehiculo_Id(TextBox^ tbuscar,DataGridView^ grilla_vehiculo){
+	reset_grilla(grilla_vehiculo);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("vehiculo.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getId())
+				{
+				objeto_grilla(grilla_vehiculo,i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void vehiculo::buscarVehiculo_Tipo(TextBox^ tbuscar,DataGridView^ grilla_vehiculo){
+	reset_grilla(grilla_vehiculo);
+	string n;
+	n=marshal_as<std::string>(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("vehiculo.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(n==getTipo())
+				{
+				objeto_grilla(grilla_vehiculo,i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+void vehiculo::buscarVehiculo_Anho(TextBox^ tbuscar,DataGridView^ grilla_vehiculo){
+	reset_grilla(grilla_vehiculo);
+	int id;
+	id=System::Convert::ToInt32(tbuscar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("vehiculo.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getAnho())
+				{
+				objeto_grilla(grilla_vehiculo,i);
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+}
+
+
+void vehiculo::guardar_modificado(TextBox^ tmodificar,TextBox^ ttipo,TextBox^ tprecio,TextBox^ tanho,TextBox^ tcapacidad){
+	int id;
+	id=System::Convert::ToInt32(tmodificar->Text);
+    FILE *ptr ;
+	ptr= fopen("vehiculo.dat", "r+b");
+    if (ptr != NULL)
+    {
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fread(&*this, sizeof(*this), 1, ptr);
+		string n;
+		n=marshal_as<std::string>(ttipo->Text);
+		strcpy(tipo,n.c_str());
+		setPrecio(System::Convert::ToInt32(tprecio->Text));
+		setAnho(System::Convert::ToInt32(tanho->Text));
+		setCapacidad(System::Convert::ToInt32(tcapacidad->Text));
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fwrite(&*this, sizeof(*this), 1, ptr);
+        fclose(ptr);
+    }
+ 
+}
+void vehiculo::modificarVehiculo(TextBox^ tmodificar,TextBox^ ttipo,TextBox^ tprecio,TextBox^ tanho,TextBox^ tcapacidad){
+	int id;
+	id=System::Convert::ToInt32(tmodificar->Text);
+    FILE *ptr ;
+	ptr= fopen("vehiculo.dat", "r+b");
+    if (ptr != NULL)
+    {
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fread(&*this, sizeof(*this), 1, ptr);
+		ttipo->Text=marshal_as<System::String^>(getTipo());
+		tprecio->Text=System::Convert::ToString(getPrecio());
+		tanho->Text=System::Convert::ToString(getAnho());
+		tcapacidad->Text=System::Convert::ToString(getCapacidad());
+        fseek(ptr, (id - 1) * sizeof(*this), SEEK_SET);
+        fwrite(&*this, sizeof(*this), 1, ptr);
+        fclose(ptr);
+    }
+    
+}
+
+bool vehiculo::verifId_existe(TextBox^ tmodificar){
+	int id;
+	id=System::Convert::ToInt32(tmodificar->Text);
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("vehiculo.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getId())
+				{
+				return true;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+	return false;
+}
+
+vehiculo vehiculo::retornar(int id)
+{
+	vehiculo a;
+	FILE*ptr;
+	int i=0;
+	ptr=fopen("vehiculo.dat","rb");
+	if(ptr!=NULL){ 
+		fread(&*this, sizeof(*this), 1, ptr);
+		while (feof(ptr)==false) {
+			if(getEstado()=='A')
+			{
+				if(id==getId())
+				{
+				a=*this;
+				i++;
+				}
+			}
+			fread (&*this, sizeof(*this), 1, ptr);
+		}
+	}
+	fclose(ptr);
+	return a;
+}
+
+
+
